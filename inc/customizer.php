@@ -79,9 +79,11 @@ function twentysixteen_header_style() {
 	// If the header text has been hidden.
 	?>
 	<style type="text/css" id="twentysixteen-header-css">
+		/*
 		.site-branding {
 			margin: 0 auto 0 0;
 		}
+		*/
 
 		.site-branding .site-title,
 		.site-description {
@@ -134,7 +136,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 	) ) );
 
 	$wp_customize->add_setting( 'header_max_width', array(
-		'default'           => 'full',
+		'default'           => '100%',
 		'transport'         => 'refresh',
 	) );
 
@@ -145,7 +147,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'body_max_width', array(
-		'default'           => 'full',
+		'default'           => '100%',
 		'transport'         => 'refresh',
 	) );
 
@@ -156,7 +158,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'footer_max_width', array(
-		'default'           => 'full',
+		'default'           => '100%',
 		'transport'         => 'refresh',
 	) );
 
@@ -225,6 +227,8 @@ function twentysixteen_customize_register( $wp_customize ) {
 		'section'     => 'colors',
 	) ) );
 
+	/** FONTS SECTION **/
+
 	//add font section
 	$wp_customize->add_section( 'fonts' , array(
 		'title'      => 'Fonts',
@@ -235,11 +239,17 @@ function twentysixteen_customize_register( $wp_customize ) {
 	$font_choices = array('default' => 'Default');
 	$google_fonts = json_decode(file_get_contents('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyDHfN0BA48kB6I8nfHbY0r9BKft6etHzUY'));
 	foreach($google_fonts->items as $font) {
-		foreach($font->variants as $variant) {
-			$font_value = $font->family . ' - ' . $variant;
-			$font_choices[$font_value] = $font_value;
+		foreach($font->files as $variant => $file) {
+			$font_label = $font->family . ' - ' . $variant;
+			$font_value = array(
+				'font-family' => $font->family,
+				'font-variation' => $variant,
+				'font-url' => $file,
+			);
+			$font_choices[json_encode($font_value)] = $font_label;
 		}
 	}
+	/*
 	$font_weight_choices = array(
 		'100' => '100',
 		'200' => '200',
@@ -253,6 +263,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 		'initial' => 'initial',
 		'inherit' => 'inherit',
 	);
+	*/
 
 	// heading font
 	$wp_customize->add_setting( 'heading_font', array(
@@ -277,6 +288,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 		'section'     => 'fonts',
 	) );
 
+	/*
 	$wp_customize->add_setting( 'heading_weight', array(
 		'default'           => 'bold',
 		'transport'         => 'refresh',
@@ -288,6 +300,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 		'type'	      => 'select',
 		'choices'	=> $font_weight_choices
 	) );
+	*/
 
 	$wp_customize->add_setting( 'heading_color', array(
 		'default'           => '#000',
@@ -323,12 +336,96 @@ function twentysixteen_customize_register( $wp_customize ) {
 	$wp_customize->add_setting( 'heading_size3', array(
 		'default'           => 'inherit',
 		'transport'         => 'refresh',
+
 	) );
 
 	$wp_customize->add_control( 'heading_size3', array(
 		'label'       => __( 'Heading 3 Font (px)', 'twentysixteen' ),
 		'section'     => 'fonts',
 	) );
+	/** EOF FONTS SECTION **/
+
+	/** HEADER SECTION **/
+	$header_section = $wp_customize->get_section('header_image');
+	$header_section->title = "Header";
+
+	$wp_customize->add_setting( 'menu1_font', array(
+		'default'           => 'Open Sans',
+		'transport'         => 'refresh',
+	) );
+
+	$wp_customize->add_control( 'menu1_font', array(
+		'label'       => __( 'Menu 1 Font', 'twentysixteen' ),
+		'section'     => 'header_image',
+		'type' 	      => 'select',
+		'choices'     => $font_choices
+	) );
+
+	$wp_customize->add_setting( 'menu1_font_color', array(
+		'default'           => '#000',
+		'transport'         => 'refresh',
+	) );
+
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'menu1_font_color', array(
+		'label'       => __( 'Color', 'twentysixteen' ),
+		'section'     => 'header_image',
+	) ) );
+
+	$wp_customize->add_setting( 'menu1_font_color_active', array(
+		'default'           => '#999',
+		'transport'         => 'refresh',
+	) );
+
+	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'menu1_font_color_active', array(
+		'label'       => __( 'Active Color', 'twentysixteen' ),
+		'section'     => 'header_image',
+	) ) );
+
+	/** EOF HEADER **/
+
+	/** FOOTER **/
+	//add font section
+	$wp_customize->add_section( 'footer' , array(
+		'title'      => 'Footer',
+		'priority'   => 61,
+	    ) );
+
+	$wp_customize->add_setting( 'footer_rows', array(
+		'default'           => '0',
+		'transport'         => 'refresh',
+	) );
+
+	$wp_customize->add_control( 'footer_rows', array(
+		'label'       => __( 'Aantal rows', 'twentysixteen' ),
+		'section'     => 'footer',
+		'description' => 'Save & refresh browser voor extra opties'
+	) );
+
+
+	for($t = 1; $t <= get_theme_mod('footer_rows', '0'); $t++) {
+		$wp_customize->add_setting( 'footer'.$t.'_columns', array(
+			'default'           => '1',
+			'transport'         => 'refresh',
+		) );
+
+		$wp_customize->add_control('footer'.$t.'_columns', array(
+			'label'       => sprintf(__( 'Footer %s Aantal kolommen', 'twentysixteen' ), $t),
+			'section'     => 'footer',
+		));
+
+		$wp_customize->add_setting( 'footer'.$t.'_columns_aspect', array(
+			'default'           => '',
+			'transport'         => 'refresh',
+		) );
+
+		$wp_customize->add_control('footer'.$t.'_columns_aspect', array(
+			'label'       => sprintf(__( 'Footer %s Kolommen Verhouding', 'twentysixteen' ), $t),
+			'section'     => 'footer',
+			'description' => 't.o.v 100%. Dus bijvoorbeeld 50/50, 33/77 of 33/33/33'
+		));
+
+	}
+
 
 }
 add_action( 'customize_register', 'twentysixteen_customize_register', 11 );
