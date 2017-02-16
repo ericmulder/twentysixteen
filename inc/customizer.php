@@ -191,6 +191,12 @@ function twentysixteen_customize_register( $wp_customize ) {
 	// Remove the core header textcolor control, as it shares the main text color.
 	$wp_customize->remove_control( 'header_textcolor' );
 
+	/** COLOR SECTION **/
+	$color_section = $wp_customize->get_section('colors');
+	//move down fonts property
+	$color_section->title = "Fonts & Colors";
+	$color_section->priority = 91;
+
 	// Add link color setting and control.
 	$wp_customize->add_setting( 'link_color', array(
 		'default'           => $color_scheme[2],
@@ -229,12 +235,6 @@ function twentysixteen_customize_register( $wp_customize ) {
 
 	/** FONTS SECTION **/
 
-	//add font section
-	$wp_customize->add_section( 'fonts' , array(
-		'title'      => 'Fonts',
-		'priority'   => 90,
-	    ) );
-
 	//add font dropdown
 	$font_choices = array('default' => 'Default');
 	$google_fonts = json_decode(file_get_contents('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyDHfN0BA48kB6I8nfHbY0r9BKft6etHzUY'));
@@ -249,21 +249,6 @@ function twentysixteen_customize_register( $wp_customize ) {
 			$font_choices[json_encode($font_value)] = $font_label;
 		}
 	}
-	/*
-	$font_weight_choices = array(
-		'100' => '100',
-		'200' => '200',
-		'300' => '300',
-		'400' => '400 - normal',
-		'500' => '500',
-		'600' => '600',
-		'700' => '700 - bold',
-		'800' => '800',
-		'900' => '900',
-		'initial' => 'initial',
-		'inherit' => 'inherit',
-	);
-	*/
 
 	// heading font
 	$wp_customize->add_setting( 'heading_font', array(
@@ -273,7 +258,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control( 'heading_font', array(
 		'label'       => __( 'Heading Font', 'twentysixteen' ),
-		'section'     => 'fonts',
+		'section'     => 'colors',
 		'type' 	      => 'select',
 		'choices'     => $font_choices
 	) );
@@ -285,22 +270,8 @@ function twentysixteen_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control( 'heading_size', array(
 		'label'       => __( 'Heading Font (px)', 'twentysixteen' ),
-		'section'     => 'fonts',
+		'section'     => 'colors',
 	) );
-
-	/*
-	$wp_customize->add_setting( 'heading_weight', array(
-		'default'           => 'bold',
-		'transport'         => 'refresh',
-	) );
-
-	$wp_customize->add_control( 'heading_weight', array(
-		'label'       => __( 'Heading Weight', 'twentysixteen' ),
-		'section'     => 'fonts',
-		'type'	      => 'select',
-		'choices'	=> $font_weight_choices
-	) );
-	*/
 
 	$wp_customize->add_setting( 'heading_color', array(
 		'default'           => '#000',
@@ -309,7 +280,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'heading_color', array(
 		'label'       => __( 'Heading Color', 'twentysixteen' ),
-		'section'     => 'fonts',
+		'section'     => 'colors',
 	) ) );
 
 	/* custom fonts per heading */
@@ -320,7 +291,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control( 'heading_size1', array(
 		'label'       => __( 'Heading 1 Font (px)', 'twentysixteen' ),
-		'section'     => 'fonts',
+		'section'     => 'colors',
 	) );
 
 	$wp_customize->add_setting( 'heading_size2', array(
@@ -330,7 +301,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control( 'heading_size2', array(
 		'label'       => __( 'Heading 2 Font (px)', 'twentysixteen' ),
-		'section'     => 'fonts',
+		'section'     => 'colors',
 	) );
 
 	$wp_customize->add_setting( 'heading_size3', array(
@@ -341,7 +312,7 @@ function twentysixteen_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control( 'heading_size3', array(
 		'label'       => __( 'Heading 3 Font (px)', 'twentysixteen' ),
-		'section'     => 'fonts',
+		'section'     => 'colors',
 	) );
 	/** EOF FONTS SECTION **/
 
@@ -424,7 +395,19 @@ function twentysixteen_customize_register( $wp_customize ) {
 			'description' => 't.o.v 100%. Dus bijvoorbeeld 50/50, 33/77 of 33/33/33'
 		));
 
+		$wp_customize->add_setting( 'footer'.$t.'_background', array(
+			'default'           => '',
+			'transport'         => 'refresh',
+		) );
+
+		$wp_customize->add_control(new WP_Customize_Color_Control( $wp_customize, 'footer'.$t.'_background', array(
+			'label'       => __( 'Background Color', 'twentysixteen' ),
+			'section'     => 'footer',
+		) ) );
+
 	}
+
+	/** EOF FOOTER **/
 
 
 }

@@ -139,12 +139,6 @@ function twentysixteen_setup() {
 		'chat',
 	) );
 
-	/*
-	 * This theme styles the visual editor to resemble the theme style,
-	 * specifically font, colors, icons, and column width.
-	 */
-	add_editor_style( array( 'css/editor-style.css', twentysixteen_fonts_url() ) );
-
 	// Indicate widget sidebars can use selective refresh in the Customizer.
 	add_theme_support( 'customize-selective-refresh-widgets' );
 }
@@ -185,10 +179,10 @@ function twentysixteen_widgets_init() {
 
 	//footer widgets
 	for($t = 1; $t <= get_theme_mod('footer_rows', '0'); $t++) {
-		for($x = 1; $x <= get_theme_mod('footer'.$t.'_columns', '0'); $x++) {
+		for($x = 1; $x <= get_theme_mod('footer'.$t.'_columns', '1'); $x++) {
 			register_sidebar( array(
 				'name'          => __( 'Content Footer ' . $t . '-' .$x , 'twentysixteen' ),
-				'id'            => 'footer-'.$t.'-'.$x,
+				'id'            => 'footer_'.$t.'_'.$x,
 				'description'   => __( 'Appears in the footer.', 'twentysixteen' ),
 				'before_widget' => '<section id="%1$s" class="widget %2$s">',
 				'after_widget'  => '</section>',
@@ -199,47 +193,6 @@ function twentysixteen_widgets_init() {
 	}
 }
 add_action( 'widgets_init', 'twentysixteen_widgets_init' );
-
-if ( ! function_exists( 'twentysixteen_fonts_url' ) ) :
-/**
- * Register Google fonts for Twenty Sixteen.
- *
- * Create your own twentysixteen_fonts_url() function to override in a child theme.
- *
- * @since Twenty Sixteen 1.0
- *
- * @return string Google fonts URL for the theme.
- */
-function twentysixteen_fonts_url() {
-	$fonts_url = '';
-	$fonts     = array();
-	$subsets   = 'latin,latin-ext';
-
-	/* translators: If there are characters in your language that are not supported by Merriweather, translate this to 'off'. Do not translate into your own language. */
-	if ( 'off' !== _x( 'on', 'Merriweather font: on or off', 'twentysixteen' ) ) {
-		$fonts[] = 'Merriweather:400,700,900,400italic,700italic,900italic';
-	}
-
-	/* translators: If there are characters in your language that are not supported by Montserrat, translate this to 'off'. Do not translate into your own language. */
-	if ( 'off' !== _x( 'on', 'Montserrat font: on or off', 'twentysixteen' ) ) {
-		$fonts[] = 'Montserrat:400,700';
-	}
-
-	/* translators: If there are characters in your language that are not supported by Inconsolata, translate this to 'off'. Do not translate into your own language. */
-	if ( 'off' !== _x( 'on', 'Inconsolata font: on or off', 'twentysixteen' ) ) {
-		$fonts[] = 'Inconsolata:400';
-	}
-
-	if ( $fonts ) {
-		$fonts_url = add_query_arg( array(
-			'family' => urlencode( implode( '|', $fonts ) ),
-			'subset' => urlencode( $subsets ),
-		), 'https://fonts.googleapis.com/css' );
-	}
-
-	return $fonts_url;
-}
-endif;
 
 /**
  * Handles JavaScript detection.
@@ -259,11 +212,6 @@ add_action( 'wp_head', 'twentysixteen_javascript_detection', 0 );
  * @since Twenty Sixteen 1.0
  */
 function twentysixteen_scripts() {
-	// Add custom fonts, used in the main stylesheet.
-	wp_enqueue_style( 'twentysixteen-fonts', twentysixteen_fonts_url(), array(), null );
-
-	// Add Genericons, used in the main stylesheet.
-	wp_enqueue_style( 'genericons', get_template_directory_uri() . '/genericons/genericons.css', array(), '3.4.1' );
 
 	// Theme stylesheet.
 	wp_enqueue_style( 'twentysixteen-style', get_stylesheet_uri() );
@@ -447,37 +395,48 @@ require_once get_template_directory() . '/inc/required-plugins.php';
 add_action( 'wp_head', 'wpto_customizer_css');
 function wpto_customizer_css()
 {
-	$custom_font = get_theme_mod('heading_font', 'Default');
-	if($custom_font != 'Default') {
+	$google_fonts = array();
+	$custom_font = get_theme_mod('heading_font', 'default');
+	if($custom_font != 'default') {
 	   $custom_font = json_decode($custom_font);
+	   $google_fonts[] = $custom_font;
 	   $heading_font = $custom_font->{'font-family'};
-	   $heading_font_weight = $custom_font->{'font-variation'};
+	   $heading_font_variation = $custom_font->{'font-variation'};
+	   if(strpos($heading_font_variation, 'italic') !== false) {
+		$heading_font_italic = 'italic';
+		$heading_font_weight = str_replace('italic','',$heading_font_variation);
+	   } else {
+		$heading_font_weight = $heading_font_variation;
+	   }
 	}
     ?>
 	<!-- customizer override -->
          <style type="text/css">
-             h1, h2, h3, h4, h5, h6, h7 {
+             h1, h1 a, h2, h2 a, h3, h3 a, h4, h4 a, h5, h5 a, h6, h6 a, h7, h7 a  {
 		color: <?php echo get_theme_mod('heading_color', '#43C6E4'); ?> !important;
 		font-weight: <?php echo $heading_font_weight; ?> !important;
-		font-size: <?php echo get_theme_mod('heading_size', 'inherit'); ?> !important;
+		font-size: <?php echo get_theme_mod('heading_size', false) ? get_theme_mod('heading_size') . 'px' : 'inherit'; ?> !important;
 		font-family: '<?php echo $heading_font; ?>' !important;
+		<?php if(isset($heading_font_italic)) : ?>
+			font-style: italic;
+		<?php endif; ?>
 	     }
 
 	     <?php if(get_theme_mod('heading_size1', 'inherit') != 'inherit') : ?>
-	     h1 {
-		font-size: <?= get_theme_mod('heading_size1', 'inherit'); ?> !important;
+	     h1, h1 a {
+		font-size: <?= get_theme_mod('heading_size1', 'inherit'); ?>px !important;
 	     }
 	     <?php endif; ?>
 
 	     <?php if(get_theme_mod('heading_size2', 'inherit') != 'inherit') : ?>
-	     h2 {
-		font-size: <?= get_theme_mod('heading_size2', 'inherit'); ?> !important;
+	     h2, h2 a {
+		font-size: <?= get_theme_mod('heading_size2', 'inherit'); ?>px !important;
 	     }
 	     <?php endif; ?>
 
 	     <?php if(get_theme_mod('heading_size3', 'inherit') != 'inherit') : ?>
-	     h3 {
-		font-size: <?= get_theme_mod('heading_size3', 'inherit'); ?> !important;
+	     h3, h3 a {
+		font-size: <?= get_theme_mod('heading_size3', 'inherit'); ?>px !important;
 	     }
 	     <?php endif; ?>
 
@@ -491,16 +450,16 @@ function wpto_customizer_css()
 		margin: 15px auto;
 	     }
 	     .site-footer {
-		max-width: <?= get_theme_mod('footer_max_width', '100%'); ?> !important;
 		margin: 0 auto;
 	     }
 	     /** MENU **/
 	     <?php
-		$custom_font = get_theme_mod('menu1_font', 'Default');
+		$custom_font = get_theme_mod('menu1_font', 'default');
 		$menu1_font = 'Open Sans';
 		$menu1_font_weight = 'normal';
-		if($custom_font != 'Default') {
+		if($custom_font != 'default') {
 		   $custom_font = json_decode($custom_font);
+		   $google_fonts[] = $custom_font;
 		   $menu1_font = $custom_font->{'font-family'};
 		   $menu1_font_weight = $custom_font->{'font-variation'};
 		}
@@ -514,9 +473,26 @@ function wpto_customizer_css()
 	     .main-navigation a:hover, .main-navigation .current-menu-item > a, .main-navigation .current-menu-ancestor > a {
 		color: <?= get_theme_mod('menu1_font_color_active', '#999'); ?> !important;
 	     }
-
-
+	     /** Footer **/
+	     <?php for($t = 1; $t <= get_theme_mod('footer_rows', '0'); $t++) : ?>
+		#footer_<?= $t ?> {
+			background: <?= get_theme_mod('footer'.$t.'_background', '#fff'); ?>;
+		}
+	     <?php endfor; ?>
          </style>
+
+	<?php
+	if(count($google_fonts))  :
+		$google_string = '';
+		foreach($google_fonts as $custom_font) :
+			$google_string .= urlencode($custom_font->{'font-family'}) .  ($custom_font->{'font-variation'} != 'regular'? ':' . $custom_font->{'font-variation'} : '') . '|';
+		endforeach;
+		$google_string = rtrim($google_string, '|');
+		?>
+		 <link href="https://fonts.googleapis.com/css?family=<?= $google_string; ?>" rel="stylesheet">
+	<?php endif; ?>
+
+
     <?php
 }
 

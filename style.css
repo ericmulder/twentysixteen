@@ -2414,7 +2414,13 @@ body.search-no-results .page-header {
  */
 
 .site-footer {
-	padding: 0px 50px;
+	padding: 0px 0px;
+}
+.site-footer .footer-row {
+	width: 100%;
+}
+.site-footer .footer-row .footer-inner {
+	margin: 0 auto;
 }
 
 .site-info {
@@ -3348,7 +3354,6 @@ p > video {
 		-webkit-flex-wrap: wrap;
 		-ms-flex-wrap: wrap;
 		flex-wrap: wrap;
-		padding: 0 15px;
 	}
 
 	.site-footer .social-navigation {
@@ -3969,4 +3974,7 @@ p > video {
 	.widecolumn {
 		padding: 0;
 	}
+}
+.cleardit {
+	clear: both;
 }
