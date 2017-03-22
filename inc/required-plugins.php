@@ -17,11 +17,6 @@ require_once get_template_directory() . '/plugins/class-tgm-plugin-activation.ph
 
 add_action( 'tgmpa_register', 'wpto__register_required_plugins' );
 
-//set composer updates from local plugin folder
-if(function_exists('vc_set_as_theme')) {
-    vc_set_as_theme();
-}
-
 /**
  * Register the required plugins for this theme.
  *
@@ -77,6 +72,11 @@ function wpto__register_required_plugins() {
 		array(
 			'name'        => 'WP Editor Widget',
 			'slug'        => 'wp-editor-widget',
+		),
+
+		array(
+			'name'        => 'Wordfence',
+			'slug'        => 'wordfence',
 		),
 
 	);

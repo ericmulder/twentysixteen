@@ -91,9 +91,8 @@ function twentysixteen_setup() {
 	 *  @since Twenty Sixteen 1.2
 	 */
 	add_theme_support( 'custom-logo', array(
-		'height'      => 240,
-		'width'       => 240,
 		'flex-height' => true,
+		'flex-width' => true,
 	) );
 
 	/*
@@ -127,6 +126,7 @@ function twentysixteen_setup() {
 	 *
 	 * See: https://codex.wordpress.org/Post_Formats
 	 */
+	/*
 	add_theme_support( 'post-formats', array(
 		'aside',
 		'image',
@@ -138,6 +138,7 @@ function twentysixteen_setup() {
 		'audio',
 		'chat',
 	) );
+	*/
 
 	// Indicate widget sidebars can use selective refresh in the Customizer.
 	add_theme_support( 'customize-selective-refresh-widgets' );
@@ -389,36 +390,76 @@ add_filter( 'widget_tag_cloud_args', 'twentysixteen_widget_tag_cloud_args' );
  */
 require_once get_template_directory() . '/inc/required-plugins.php';
 
+/**
+ * Check to see if the current page is the login/register page
+ * Use this in conjunction with is_admin() to separate the front-end from the back-end of your theme
+ * @return bool
+ */
+if ( ! function_exists( 'is_login_page' ) ) {
+  function is_login_page() {
+    return in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ) );
+  }
+}
+
 /*
  * Add custom CSS from Customizer
  */
+function wpto_icon_checker() {
+    if ( ! is_admin() && ! is_login_page() ) {
+        // Enqueue scripts, do theme magic, etc.
+	if(get_theme_mod('use_icon_set', false)) {
+		wp_enqueue_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css' );
+	}
+    }
+}
+
+add_action( 'wp', 'wpto_icon_checker' );
 add_action( 'wp_head', 'wpto_customizer_css');
 function wpto_customizer_css()
 {
 	$google_fonts = array();
-	$custom_font = get_theme_mod('heading_font', 'default');
-	if($custom_font != 'default') {
-	   $custom_font = json_decode($custom_font);
-	   $google_fonts[] = $custom_font;
-	   $heading_font = $custom_font->{'font-family'};
-	   $heading_font_variation = $custom_font->{'font-variation'};
-	   if(strpos($heading_font_variation, 'italic') !== false) {
-		$heading_font_italic = 'italic';
-		$heading_font_weight = str_replace('italic','',$heading_font_variation);
-	   } else {
-		$heading_font_weight = $heading_font_variation;
-	   }
-	}
+	$body_font = wpto_font_parser('body', $google_fonts);
+	$heading_font = wpto_font_parser('heading', $google_fonts);
     ?>
 	<!-- customizer override -->
          <style type="text/css">
+	     html {
+		background: <?php echo get_theme_mod('background_color', '#000'); ?>;
+	     }
+	     body {
+		font-size: <?php echo get_theme_mod('body_size', false) ? get_theme_mod('body_size') . 'px' : 'inherit'; ?> !important;
+		<?php if($body_font['font-family'] != 'inherit') : ?>
+			font-family: '<?php echo $body_font['font-family']; ?>' !important;
+		<?php endif; ?>
+		<?php if($body_font['font-italic']) : ?>
+			font-style: italic;
+		<?php endif; ?>
+		<?php if($body_font['font-weight']) : ?>
+			font-weight: <?php echo $body_font['font-weight']; ?> !important;
+		<?php endif; ?>
+		<?php if($body_font['line-height']) : ?>
+			line-height: <?php echo $body_font['line-height']; ?> !important;
+		<?php endif; ?>
+	     }
+	     <?php if($body_font['line-height']) : ?>
+		p {
+			line-height: <?php echo $body_font['line-height']; ?> !important;
+		}
+	     <?php endif; ?>
              h1, h1 a, h2, h2 a, h3, h3 a, h4, h4 a, h5, h5 a, h6, h6 a, h7, h7 a  {
 		color: <?php echo get_theme_mod('heading_color', '#43C6E4'); ?> !important;
-		font-weight: <?php echo $heading_font_weight; ?> !important;
 		font-size: <?php echo get_theme_mod('heading_size', false) ? get_theme_mod('heading_size') . 'px' : 'inherit'; ?> !important;
-		font-family: '<?php echo $heading_font; ?>' !important;
-		<?php if(isset($heading_font_italic)) : ?>
+		<?php if($heading_font['font-family'] != 'inherit') : ?>
+			font-family: '<?php echo $heading_font['font-family']; ?>' !important;
+		<?php endif; ?>
+		<?php if($heading_font['font-italic']) : ?>
 			font-style: italic;
+		<?php endif; ?>
+		<?php if($heading_font['font-weight']) : ?>
+			font-weight: <?php echo $heading_font['font-weight']; ?> !important;
+		<?php endif; ?>
+		<?php if($heading_font['line-height']) : ?>
+			line-height: <?php echo $heading_font['line-height']; ?> !important;
 		<?php endif; ?>
 	     }
 
@@ -442,50 +483,195 @@ function wpto_customizer_css()
 
 	     /* max width */
 	     .site-header-main, .header-image {
-		max-width: <?= get_theme_mod('header_max_width', '100%'); ?> !important;
+		width: <?= get_theme_mod('header_max_width', '100%'); ?> !important;
+		max-width: 100%;
 		margin: 0 auto;
 	     }
-	     .site-content {
-		max-width: <?= get_theme_mod('body_max_width', '100%'); ?> !important;
-		margin: 15px auto;
+	     body:not(.page-template-full-width) .site-content {
+		width: <?= get_theme_mod('body_max_width', '100%'); ?> !important;
+		max-width: 100%;
+		margin: 0 auto;
 	     }
 	     .site-footer {
 		margin: 0 auto;
 	     }
+	     /** HEADER POSITIONS **/
+	     <?php if(get_theme_mod('logo_position', 'left') == 'center') : ?>
+			.site-branding {
+				width: 100%;
+				text-align: center;
+				margin: 25px;
+			}
+	     <?php endif; ?>
+
+	     <?php if(get_theme_mod('logo_position', 'left') == 'above') : ?>
+			header#masthead.site-header .site-branding {
+				padding-top: 10px;
+				width: 100%;
+			}
+	     <?php endif; ?>
+
+	     <?php if(get_theme_mod('menu1_position', 'left') == 'center') : ?>
+			.site-header-menu {
+				margin: 0;
+			}
+			#site-navigation {
+				float: none;
+			}
+			.menu-hoofmenu-container {
+				text-align: center;
+			}
+			ul#menu-hoofmenu.primary-menu {
+				display: inline-block;
+				width: auto;
+			}
+
+	     <?php endif; ?>
 	     /** MENU **/
 	     <?php
-		$custom_font = get_theme_mod('menu1_font', 'default');
-		$menu1_font = 'Open Sans';
-		$menu1_font_weight = 'normal';
-		if($custom_font != 'default') {
-		   $custom_font = json_decode($custom_font);
-		   $google_fonts[] = $custom_font;
-		   $menu1_font = $custom_font->{'font-family'};
-		   $menu1_font_weight = $custom_font->{'font-variation'};
-		}
-
+		$menu1_font = wpto_font_parser('menu1_font', $google_fonts);
 	     ?>
 	     .main-navigation a {
 		color: <?= get_theme_mod('menu1_font_color', '#000'); ?> !important;
-		font-family: <?= $menu1_font; ?>;
-		font-weight: <?= $menu1_font_weight; ?>;
+		font-family: <?= $menu1_font['font-family']; ?>;
+		font-weight: <?= $menu1_font['font-weight']; ?>;
+	     }
+	     .menu-toggle .line {
+		background-color: <?= get_theme_mod('menu1_font_color', '#000'); ?> !important;
+	     }
+	     .site-header-menu.toggled-on, .no-js .site-header-menu {
+		width: 100%;
+	     }
+	     .site-header-menu.toggled-on #menu-hoofmenu {
+		width: 100% !important;
+		margin-top: 15px !important;
+		display: block;
 	     }
 	     .main-navigation a:hover, .main-navigation .current-menu-item > a, .main-navigation .current-menu-ancestor > a {
 		color: <?= get_theme_mod('menu1_font_color_active', '#999'); ?> !important;
 	     }
+	     /** Header sizes **/
+	     <?php
+	     if(get_theme_mod('header_sticky', false)) : ?>
+		header#masthead.site-header.sticky {
+			position: fixed;
+			z-index: 999;
+		}
+	     	@media(min-width: 44.375em) {
+			header#masthead.site-header.sticky {
+				height: <?= get_theme_mod('header_sticky_height', '30px'); ?>;
+				position: fixed;
+			}
+			header#masthead.site-header.sticky {
+				height: <?= get_theme_mod('header_sticky_height', '30px'); ?>;
+			}
+			header#masthead.site-header.sticky .site-branding,
+			header#masthead.site-header.sticky .site-header-menu,
+			header#masthead.site-header.sticky .header-image {
+				height: <?= get_theme_mod('header_sticky_height', '30px'); ?>;
+				transition: height 500ms ease-in-out;
+			}
+			header#masthead.site-header.sticky .site-branding img {
+				height: <?= get_theme_mod('header_sticky_height', '30px'); ?>;
+				width: auto;
+			}
+			header#masthead.site-header.sticky li.menu-item a {
+				line-height: <?= get_theme_mod('header_sticky_height', '100px'); ?>;
+			}
+		}
+		header#masthead.site-header {
+			position: absolute;
+			z-index: 99;
+			width: 100%;
+		}
+		.site-content {
+			padding-top:<?= get_theme_mod('header_height', '100px'); ?>;
+		}
+		.sticky .site-content {
+			padding-top:<?= get_theme_mod('header_sticky_height', '100px'); ?>;
+		}
+	     <?php endif; ?>
+
+		.menu-toggle {
+			top: <?= intval(get_theme_mod('header_height_responsive', '30')) / 2; ?>px;
+		}
+		.site-header-menu.toggled-on {
+			top: <?= get_theme_mod('header_height_responsive', '30px'); ?>;
+		}
+
+	     <?php if(get_theme_mod('header_height', false)) : ?>
+		header#masthead.site-header .site-header-menu {
+			height: <?= get_theme_mod('header_height', '100px'); ?>;
+			width: auto;
+			transition: all .35s ease-in-out;
+			-webkit-transition: all .35s ease-in-out
+		}
+
+		header#masthead.site-header {
+			transition: all .35s ease-in-out;
+			-webkit-transition: all .35s ease-in-out;
+		}
+		header#masthead.site-header li.menu-item a {
+			line-height: <?= get_theme_mod('header_height', '100px'); ?>;
+			transition: all .35s ease-in-out;
+			-webkit-transition: all .35s ease-in-out
+		}
+		<?php
+		//resize logo to line height if it floats
+		if(in_array(get_theme_mod('logo_position'), array('left', 'right'))) : ?>
+			header#masthead.site-header .site-branding,
+			header#masthead.site-header .site-branding img,
+			header#masthead.site-header .header-image {
+				height: <?= get_theme_mod('header_height', '100px'); ?>;
+				width: auto;
+				transition: all .35s ease-in-out;
+				-webkit-transition: all .35s ease-in-out
+			}
+
+		<?php endif; ?>
+	     <?php endif; ?>
+
+	     /* logo height */
+	     <?php if(get_theme_mod('logo_height', 'auto') != 'auto') : ?>
+			header#masthead.site-header .site-branding img, header#masthead.site-header .header-image {
+				height: <?= get_theme_mod('logo_height', 'auto'); ?>;
+				width: auto;
+				max-width: 100%;
+			}
+	     <?php endif; ?>
+
+	     header#masthead.site-header {
+		background-color: <?= get_theme_mod('header_bg_color', '#fff'); ?>;
+	     }
+
 	     /** Footer **/
 	     <?php for($t = 1; $t <= get_theme_mod('footer_rows', '0'); $t++) : ?>
-		#footer_<?= $t ?> {
+		#footer_<?= $t ?>, #footer_<?= $t ?> h1, #footer_<?= $t ?> h2, #footer_<?= $t ?> h3, #footer_<?= $t ?> a {
 			background: <?= get_theme_mod('footer'.$t.'_background', '#fff'); ?>;
+			color: <?= get_theme_mod('footer'.$t.'_color', '#fff'); ?> !important;
 		}
+		#footer_<?= $t ?> ul {
+			margin: 0;
+		}
+		#footer_<?= $t ?> ul li {
+			list-style: none;
+		}
+
 	     <?php endfor; ?>
+	     @media(max-width: 500px) {
+		.site-footer .footer-row .footer-inner {
+			padding: 15px;
+		     }
+	     }
          </style>
 
 	<?php
 	if(count($google_fonts))  :
 		$google_string = '';
 		foreach($google_fonts as $custom_font) :
-			$google_string .= urlencode($custom_font->{'font-family'}) .  ($custom_font->{'font-variation'} != 'regular'? ':' . $custom_font->{'font-variation'} : '') . '|';
+			if($custom_font->{'font-url'}) :
+				$google_string .= urlencode($custom_font->{'font-family'}) .  ($custom_font->{'font-variation'} != 'regular'? ':' . $custom_font->{'font-variation'} : '') . '|';
+			endif;
 		endforeach;
 		$google_string = rtrim($google_string, '|');
 		?>
@@ -496,6 +682,54 @@ function wpto_customizer_css()
     <?php
 }
 
+//custom mobile logo
+add_filter('get_custom_logo', 'wpto_mobile_logo', 10, 2);
+function wpto_mobile_logo($html, $blog_id) {
+	$custom_logo_id = get_theme_mod( 'responsive_logo' );
+	// We have a logo. Logo is go.
+	$mobile_html = '';
+	if ( $custom_logo_id ) {
+		$mobile_html = sprintf( '<a href="%1$s" class="custom-logo-link" rel="home" itemprop="url">%2$s</a>',
+			esc_url( home_url( '/' ) ),
+			wp_get_attachment_image( $custom_logo_id, 'full', false, array(
+				'class'    => 'responsive-logo',
+				'itemprop' => 'logo',
+			) )
+		);
+	}
+	return $html . $mobile_html;
+}
+
+function wpto_font_parser($custom_font_label, &$google_fonts) {
+	$custom_font = get_theme_mod($custom_font_label . '_font', 'default');
+	if($custom_font != 'default') {
+	   $custom_font = json_decode($custom_font);
+	   $google_fonts[] = $custom_font;
+	   $font_family = $custom_font->{'font-family'};
+	   $font_variation = $custom_font->{'font-variation'};
+	   if(strpos($font_variation, 'italic') !== false) {
+		$font_italic = 'italic';
+		$font_weight = str_replace('italic','',$font_variation);
+	   } else {
+		$font_italic = false;
+		$font_weight = $font_variation;
+	   }
+	} else {
+	   $font_family = 'inherit';
+	   $font_italic = false;
+	   $font_weight = false;
+	}
+
+	//check line-height
+	$line_height = get_theme_mod($custom_font_label . '_line_height');
+
+	return array(
+		'font-family' => $font_family,
+		'font-italic' => $font_italic,
+		'font-weight' => $font_weight,
+		'line-height' => $line_height,
+	);
+}
 
 if(!function_exists('print_pre')) {
 	function print_pre($obj) {
@@ -503,4 +737,17 @@ if(!function_exists('print_pre')) {
 		print_r($obj);
 		echo '</pre>';
 	}
+}
+
+/** UPDATE CHECKER **/
+//Initialize the update checker.
+require 'theme-updates/theme-update-checker.php';
+$example_update_checker = new ThemeUpdateChecker(
+    'wptakeoff',
+    'https://emdevelopment.nl/admin_tools/wp/wptakeoff/version.json'
+);
+//set composer updates from local plugin folder
+add_action( 'vc_before_init', 'wpto_vcSetAsTheme' );
+function wpto_vcSetAsTheme() {
+    vc_set_as_theme();
 }

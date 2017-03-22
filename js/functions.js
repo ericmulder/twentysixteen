@@ -197,4 +197,18 @@
 		belowEntryMetaClass( 'img.size-full' );
 		belowEntryMetaClass( 'blockquote.alignleft, blockquote.alignright' );
 	} );
+
+	$(function() {
+		//caches a jQuery object containing the header element
+		var header = $(".site-header");
+		$(window).scroll(function() {
+		    var scroll = $(window).scrollTop();
+		    if (scroll >= 1) {
+			header.addClass("sticky");
+		    } else {
+			header.removeClass("sticky");
+		    }
+		});
+	    });
+
 } )( jQuery );

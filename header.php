@@ -44,20 +44,13 @@
 				</div><!-- .site-branding -->
 
 				<?php if ( has_nav_menu( 'primary' ) || has_nav_menu( 'secundary' ) ) : ?>
-					<button id="menu-toggle" class="menu-toggle"><?php _e( 'Menu', 'twentysixteen' ); ?></button>
+					<button id="menu-toggle" class="menu-toggle">
+						<span class="line"></span>
+						<span class="line"></span>
+						<span class="line"></span>
+					</button>
 
 					<div id="site-header-menu" class="site-header-menu">
-						<?php if ( has_nav_menu( 'primary' ) ) : ?>
-							<nav id="site-navigation" class="main-navigation" role="navigation" aria-label="<?php esc_attr_e( 'Primary Menu', 'twentysixteen' ); ?>">
-								<?php
-									wp_nav_menu( array(
-										'theme_location' => 'primary',
-										'menu_class'     => 'primary-menu',
-									 ) );
-								?>
-							</nav><!-- .main-navigation -->
-						<?php endif; ?>
-
 						<?php if ( has_nav_menu( 'secundary' ) ) : ?>
 							<nav id="secundary-navigation" class="main-navigation" role="navigation" aria-label="<?php esc_attr_e( 'Social Links Menu', 'twentysixteen' ); ?>">
 								<?php
@@ -67,6 +60,17 @@
 									) );
 								?>
 							</nav><!-- .secundary-navigation -->
+						<?php endif; ?>
+
+						<?php if ( has_nav_menu( 'primary' ) ) : ?>
+							<nav id="site-navigation" class="main-navigation" role="navigation" aria-label="<?php esc_attr_e( 'Primary Menu', 'twentysixteen' ); ?>">
+								<?php
+									wp_nav_menu( array(
+										'theme_location' => 'primary',
+										'menu_class'     => 'primary-menu',
+									 ) );
+								?>
+							</nav><!-- .main-navigation -->
 						<?php endif; ?>
 
 					</div><!-- .site-header-menu -->
