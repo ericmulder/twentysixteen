@@ -4,7 +4,7 @@ Theme URI: https://emdevelopment.nl
 Author: Eric & Vincent
 Author URI: https://emdevelopment.nl/
 Description: Our framework to make your site shine!
-Version: 1.0
+Version: 1.2
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: one-column, two-columns, right-sidebar, accessibility-ready, custom-background, custom-colors, custom-header, custom-menu, editor-style, featured-images, flexible-header, microformats, post-formats, rtl-language-support, sticky-post, threaded-comments, translation-ready, blog
@@ -1631,13 +1631,13 @@ blockquote:after,
 }
 
 .custom-logo-link {
-	display: block;
+	display: inline-block;
 }
 
 .custom-logo {
 	display: none;
 }
-.responsive-logo {
+header#masthead.site-header .site-branding img.responsive-logo {
 	width: auto;
 	height: auto;
 }
@@ -1679,7 +1679,8 @@ blockquote:after,
 	font-size: 13px;
 	font-size: 0.8125rem;
 	position: absolute;
-	top: 0;
+	top: 50%;
+	margin-top: -9px;
 	right: 10px;
 	width: 30px;
 	padding: 0;
@@ -1734,8 +1735,8 @@ blockquote:after,
 	position: relative;
 }
 
-.home header.entry-header, .home  .no-sidebar header.entry-header {
-	display: none;
+header.entry-header {
+	display: none !important;
 }
 
 .entry-header,
@@ -2965,14 +2966,6 @@ p > video {
 		margin-left: 0;
 	}
 
-	.entry-content ul,
-	.entry-summary ul,
-	.comment-content ul,
-	.entry-content ol,
-	.entry-summary ol,
-	.comment-content ol {
-		margin-left: 0;
-	}
 
 	.entry-content li > ul,
 	.entry-summary li > ul,
@@ -3628,19 +3621,19 @@ p > video {
 		margin-top: -1.105263158em;
 	}
 
-	body:not(.search-results) article:not(.type-page) .entry-content {
+	body:not(.search-results) article.type-post .entry-content {
 		float: right;
 		width: 71.42857144%;
 	}
 
-	body:not(.search-results) article:not(.type-page) .entry-content > blockquote.alignleft.below-entry-meta {
+	body:not(.search-results) article.type-post .entry-content > blockquote.alignleft.below-entry-meta {
 		margin-left: -40%;
 		width: -webkit-calc(60% - 1.4736842105em);
 		width: calc(60% - 1.4736842105em);
 	}
 
-	body:not(.search-results) article:not(.type-page) img.below-entry-meta,
-	body:not(.search-results) article:not(.type-page) figure.below-entry-meta {
+	body:not(.search-results) article.type-post img.below-entry-meta,
+	body:not(.search-results) article.type-post figure.below-entry-meta {
 		clear: both;
 		display: block;
 		float: none;
@@ -3649,20 +3642,20 @@ p > video {
 		max-width: 140%;
 	}
 
-	body:not(.search-results) article:not(.type-page) figure.below-entry-meta img.below-entry-meta,
-	body:not(.search-results) article:not(.type-page) table figure.below-entry-meta,
-	body:not(.search-results) article:not(.type-page) table img.below-entry-meta {
+	body:not(.search-results) article.type-post figure.below-entry-meta img.below-entry-meta,
+	body:not(.search-results) article.type-post table figure.below-entry-meta,
+	body:not(.search-results) article.type-post table img.below-entry-meta {
 		margin: 0;
 		max-width: 100%;
 	}
 
-	body:not(.search-results) article:not(.type-page) .entry-footer {
+	body:not(.search-results) article.type-post .entry-footer {
 		float: left;
 		margin-top: 0.1538461538em;
 		width: 21.42857143%;
 	}
 
-	body:not(.search-results) article:not(.type-page) .entry-footer > span:not(:last-child):after {
+	body:not(.search-results) article.type-post .entry-footer > span:not(:last-child):after {
 		display: none;
 	}
 
@@ -3672,32 +3665,32 @@ p > video {
 	body:not(.search-results) .entry-format,
 	body:not(.search-results) .cat-links,
 	body:not(.search-results) .tags-links,
-	body:not(.search-results) article:not(.sticky) .posted-on,
-	body:not(.search-results) article:not(.type-page) .comments-link,
-	body:not(.search-results) article:not(.type-page) .entry-footer .edit-link {
+	body:not(.search-results) article.type-post .posted-on,
+	body:not(.search-results) article.type-post .comments-link,
+	body:not(.search-results) article.type-post .entry-footer .edit-link {
 		display: block;
 		margin-bottom: 0.5384615385em;
 	}
 
-	body:not(.search-results) article:not(.type-page) .entry-footer > span:last-child {
+	body:not(.search-results) article.type-post .entry-footer > span:last-child {
 		margin-bottom: 0;
 	}
 
-	body:not(.search-results) article:not(.type-page) .entry-footer .avatar {
+	body:not(.search-results) article.type-post .entry-footer .avatar {
 		display: block;
 		height: auto;
 		margin: 0 0 0.5384615385em;
 		width: 49px;
 	}
 
-	body.no-sidebar:not(.search-results) article:not(.type-page) .entry-content {
+	body.no-sidebar:not(.search-results) article.type-post .entry-content {
 		float: left;
 		margin-right: -100%;
 		margin-left: 	24.99999999%;
 		width: 50.00000001%;
 	}
 
-	body.no-sidebar:not(.search-results) article:not(.type-page) .entry-footer {
+	body.no-sidebar:not(.search-results) article.type-post .entry-footer {
 		margin-right: -100%;
 		margin-left: 15%;
 		width: 15%;

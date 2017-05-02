@@ -41,18 +41,31 @@ function wpto__register_required_plugins() {
 	 */
 	$plugins = array(
 
-		// This is an example of how to include a plugin bundled with a theme.
-		array(
-			'name'               => 'Visual Composer', // The plugin name.
-			'slug'               => 'js_composer', // The plugin slug (typically the folder name).
-			'source'             => get_template_directory() . '/plugins/downloads/visual-composer.zip', // The plugin source.
-			'required'           => true, // If false, the plugin is only 'recommended' instead of required.
-			'version'            => '5.0.1', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
-			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
-			'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
-			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
-			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
-		),
+        // This is an example of how to include a plugin bundled with a theme.
+        array(
+            'name'               => 'Visual Composer', // The plugin name.
+            'slug'               => 'js_composer', // The plugin slug (typically the folder name).
+            'source'             => get_template_directory() . '/plugins/downloads/visual-composer.zip', // The plugin source.
+            'required'           => true, // If false, the plugin is only 'recommended' instead of required.
+            'version'            => '5.1.1', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
+            'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
+            'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
+            'external_url'       => '', // If set, overrides default API URL and points to an external URL.
+            'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
+        ),
+
+        // This is an example of how to include a plugin bundled with a theme.
+        array(
+            'name'               => 'Gravity Forms', // The plugin name.
+            'slug'               => 'gravityforms', // The plugin slug (typically the folder name).
+            'source'             => get_template_directory() . '/plugins/downloads/gravityforms.zip', // The plugin source.
+            'required'           => false, // If false, the plugin is only 'recommended' instead of required.
+            'version'            => '2.0.7.9', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
+            'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
+            'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
+            'external_url'       => '', // If set, overrides default API URL and points to an external URL.
+            'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
+        ),
 
 
 
@@ -74,10 +87,58 @@ function wpto__register_required_plugins() {
 			'slug'        => 'wp-editor-widget',
 		),
 
-		array(
-			'name'        => 'Wordfence',
-			'slug'        => 'wordfence',
-		),
+        array(
+            'name'        => 'Wordfence',
+            'slug'        => 'wordfence',
+        ),
+
+        array(
+            'name'        => 'Autoptimize',
+            'slug'        => 'autoptimize',
+        ),
+
+
+        array(
+            'name'        => 'Duplicate Post',
+            'slug'        => 'duplicate-post',
+        ),
+
+
+        array(
+            'name'        => 'Post Types Order',
+            'slug'        => 'post-types-order',
+        ),
+
+        array(
+            'name'        => 'Simple History',
+            'slug'        => 'simple-history',
+        ),
+
+        array(
+            'name'        => 'Uber reCaptcha',
+            'slug'        => 'uber-nocaptcha-recaptcha',
+        ),
+
+        array(
+            'name'        => 'User Role Editor',
+            'slug'        => 'user-role-editor',
+        ),
+
+        array(
+            'name'        => 'User Switching',
+            'slug'        => 'user-switching',
+        ),
+
+        array(
+            'name'        => 'WP Fastest Cache',
+            'slug'        => 'wp-fastest-cache',
+        ),
+
+        array(
+            'name'        => 'Smush Image Compression and Optimization',
+            'slug'        => 'wp-smushit',
+        ),
+
 
 	);
 

@@ -121,9 +121,13 @@ if ( ! function_exists( 'twentysixteen_post_thumbnail' ) ) :
  *
  * @since Twenty Sixteen 1.0
  */
-function twentysixteen_post_thumbnail() {
+function twentysixteen_post_thumbnail($echo = true) {
 	if ( post_password_required() || is_attachment() || ! has_post_thumbnail() ) {
 		return;
+	}
+
+	if(!$echo) {
+		ob_start();
 	}
 
 	if ( is_singular() ) :
@@ -139,7 +143,14 @@ function twentysixteen_post_thumbnail() {
 		<?php the_post_thumbnail( 'post-thumbnail', array( 'alt' => the_title_attribute( 'echo=0' ) ) ); ?>
 	</a>
 
-	<?php endif; // End is_singular()
+	<?php
+	endif; // End is_singular()
+
+	if(!$echo) {
+		$contents = ob_get_contents();
+		ob_end_clean();
+		return $contents;
+	}
 }
 endif;
 
